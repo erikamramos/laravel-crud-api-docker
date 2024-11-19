@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+    laravel-app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: laravel-app
+        working_dir: /var/www
+        volumes:
+            - .:/var/www
+        ports:
+            - "8000:8000"
+        environment:
+            - DB_HOST=db
+            - DB_PORT=3306
+            - DB_DATABASE=laravel # Base de datos creada
+            - DB_USERNAME=laraveluser # Usuario regular
+            - DB_PASSWORD=laravelpass # Contraseña del usuario regular
+        depends_on:
+            - db
+
+    db:
+        image: mysql:8.0
+        container_name: laravel-db
+        environment:
+            MYSQL_ROOT_PASSWORD: rootpass # Contraseña de root
+            MYSQL_DATABASE: laravel # Nombre de la base de datos
+            MYSQL_USER: laraveluser # Usuario regular
+            MYSQL_PASSWORD: laravelpass # Contraseña del usuario regular
+        ports:
+            - "3307:3306" # Cambia el puerto del host
+        volumes:
+            - dbdata:/var/lib/mysql
+
+volumes:
+    dbdata:
+        driver: local
